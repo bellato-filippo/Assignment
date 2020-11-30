@@ -1,47 +1,101 @@
 #include "LaserScannerDrive.h"
 
-
-
-LaserScannerDrive::LaserScannerDrive() : BUFFER_DIM{10}, DEG{180}, buffer{ new double[BUFFER_DIM * DEG] }, last_index{ 0 }, last_dim{ 0 } {};
-
-void LaserScannerDrive::new_scan(std::vector<double> v) {
-	for (int i = 0; i < 180; i++) {
-		buffer[i] = v[i];
+LaserScannerDrive::LaserScannerDrive() {
+	resolution = 1;
+	BUFFER_DIM = 10;
+	size = 0;
+	buffer = new double* [BUFFER_DIM];
+	index = 0;
+	for (int i = 0; i < BUFFER_DIM; i++) {
+		buffer[i] = { nullptr };
 	}
 }
 
-std::vector<double> LaserScannerDrive::get_scan() {
-	std::vector<double> f(180);
-	for (int i = 0; i < 180; i++) {
-		f[i] = buffer[i];
+LaserScannerDrive::LaserScannerDrive(double r) {
+	resolution = r;
+	BUFFER_DIM = 10;
+	size = 0;
+	buffer = new double* [BUFFER_DIM];
+	index = 0;
+	for (int i = 0; i < BUFFER_DIM; i++) {
+		buffer[i] = { nullptr };
 	}
-	delete[] buffer;
-	buffer = new double[BUFFER_DIM * DEG];
-	return f;
+}
+
+void LaserScannerDrive::new_scan(std::vector<double> v) {
+	buffer[index] = new double[180 / resolution];
+	if (v.size() < (180 / resolution)) {
+		for (int i = 0; i < v.size(); i++) {
+			buffer[index][i] = v[i];
+		}
+		for (int i = v.size(); i < (180 / resolution); i++) {
+			buffer[index][i] = 0.0;
+		}
+	}
+	
+	for (int i = 0; i < (180 / resolution); i++) {
+		buffer[index][i] = v[i];
+	}
+	if (index >= (BUFFER_DIM - 1))
+		index = 0;
+	else
+		index++;
+
+	if (size >= 10)
+		size = 10;
+	else
+		size++;
+}
+
+std::vector<double> LaserScannerDrive::get_scan() throw(std::string) {
+	std::vector<double> scans(180 / resolution);
+	if (isEmpty())
+		throw "Il buffer è vuoto";
+	else
+	{
+		for (int i = 0; i < 180 / resolution; i++) {
+			scans[i] = buffer[index - 1][i];
+		}
+		delete[] buffer[index - 1]; //da modificare
+		if (index <= 0)
+			index = 9;
+		else
+			index--;
+	}
+	size--;
+	return scans;
 }
 
 void LaserScannerDrive::clear_buffer() {
-	delete[] buffer;
-	buffer = new double[BUFFER_DIM * DEG];
-}
-
-double LaserScannerDrive::get_distance(double grad) {
-	grad = grad + 0.5;
-	int y = (int)grad;
-	return buffer[y];
-}
-
-std::vector<double> LaserScannerDrive::get_scan_no_del() {
-	std::vector<double> f(180);
-	for (int i = 0; i < 180; i++) {
-		f[i] = buffer[i];
+	for (int i = 0; i < BUFFER_DIM; i++) {
+		delete[] buffer[i];
+		buffer[i] = { nullptr };
 	}
-	return f;
+	index = 0;
+	size = 0;
+}
+
+double LaserScannerDrive::get_distance(double d) throw(std::string){ //verificare che esista
+	int arr_index = (int)(d / resolution) + 0.5;
+	if (isEmpty()) {
+		throw "Xe vodo nino";
+	}
+	else
+	{
+		if (index = 0)
+			return buffer[9][arr_index];
+		else
+			return buffer[index - 1][arr_index];
+	}
 }
 
 std::ostream& operator<<(std::ostream& os, const LaserScannerDrive obj) {
-	for (int i = 0; i < 180; i++) {
-		os << obj.buffer[i] << " ";
+	for (int i = 0; i < 180 / obj.resolution; i++) {
+		os << obj.buffer[obj.index][i];
 	}
 	return os;
+}
+
+bool LaserScannerDrive::isEmpty() {
+	return size < 1;
 }
