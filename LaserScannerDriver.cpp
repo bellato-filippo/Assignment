@@ -218,9 +218,7 @@ LaserScannerDriver& LaserScannerDriver::operator=(LaserScannerDriver&& other) no
 
 /*Distruttore*/
 LaserScannerDriver::~LaserScannerDriver() {
-	for (int i = 0; i < BUFFER_DIM; i++) {
-		delete[] buffer[i];
-	}
+	clear_buffer();
 	delete[] buffer;
 }
 
