@@ -3,7 +3,7 @@
 
 
 int main() {
-	LaserScannerDriver o;
+	LaserScannerDriver o(2);
 	std::vector<double> test(181); //vettore di prova
 	for (int i = 0; i < test.size(); i++) {
 		test[i] = i;

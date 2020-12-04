@@ -13,7 +13,7 @@ private:
 	bool isEmpty() const; //verifica se il buffer è vuoto
 
 public:
-	LaserScannerDriver(double r); //costruttore con parametro la risolutione
+	LaserScannerDriver(double r) ; //costruttore con parametro la risolutione
 	LaserScannerDriver(); //costruttore di default
 	void new_scan(std::vector<double> &v);
 	std::vector<double> get_scan();

@@ -13,8 +13,15 @@ LaserScannerDriver::LaserScannerDriver() {
 }
 
 /*Costruttore con parametro la risoluzione. Inizializza tutte le variabili e tutti
-gli elementi del buffer a nullptr*/
+gli elementi del buffer a nullptr.
+Se la risoluzione non rientra nel range questa viene ripristinata a 1 o a 0.1
+*/
 LaserScannerDriver::LaserScannerDriver(double r) {
+	if (r > 1)
+		r = 1;
+	else if (r < 0.1)
+		r = 0.1;
+
 	index = 0;
 	size = 0;
 	scan_dimension = (int) std::floor(180 / r) + 1;
@@ -99,7 +106,7 @@ void LaserScannerDriver::clear_buffer() {
 /*Datogli un angolo restituisce la distanza corrispondente dell'ultima lettura*/
 double LaserScannerDriver::get_distance(double angolo) const{
 	if (angolo < 0 || angolo > 180) { //ritorna -1 se l'angolo non è valido
-		std::cout << "Angolo fuori dall'intervallo(0-180)\n";
+		std::cout << "Angolo fuori dall'intervallo(0 - 180)\n";
 		return -1;
 	}
 
