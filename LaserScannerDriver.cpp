@@ -1,4 +1,4 @@
-//Filippo Bellato 1224717
+//Filippo Bellato 1224717 Assegnamento1
 #include "LaserScannerDriver.h"
 
 /*Costruttore di default con risoluzione = 1*/
