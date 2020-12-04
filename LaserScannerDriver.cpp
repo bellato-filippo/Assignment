@@ -1,3 +1,4 @@
+//Filippo Bellato 1224717
 #include "LaserScannerDriver.h"
 
 /*Costruttore di default con risoluzione = 1*/

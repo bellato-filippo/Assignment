@@ -1,8 +1,9 @@
-
-#include "LaserScannerDriver.h";
+//Filippo Bellato 1224717
+#include "LaserScannerDriver.h"
 
 
 int main() {
+
 	LaserScannerDriver o(2);
 	std::vector<double> test(181); //vettore di prova
 	for (int i = 0; i < test.size(); i++) {

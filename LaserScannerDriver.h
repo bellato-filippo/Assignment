@@ -1,15 +1,16 @@
+//Filippo Bellato 1224717
 #include <iostream>
 #include <vector>
 #include <cmath>
 
 class LaserScannerDriver {
 private:
-	static constexpr int BUFFER_DIM = 10; //dimensione del buffer costante
+	static constexpr int BUFFER_DIM = 10; //dimensione del buffer costante. Invariante
 	double** buffer; //buffer come array di puntatori a double
-	double resolution; //risoluzione dello scanner
+	double resolution; //risoluzione dello scanner. Invariante
 	int index; //indice sempre una posizione avanti rispetto all'ultima scansione effettuata
 	int size; //stato di riempimento del buffer
-	int scan_dimension; //dimensione di oggni scansione
+	int scan_dimension; //dimensione di oggni scansione. Invariante
 	bool isEmpty() const; //verifica se il buffer è vuoto
 
 public:
