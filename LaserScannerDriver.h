@@ -15,10 +15,10 @@ private:
 public:
 	LaserScannerDriver(double r); //costruttore con parametro la risolutione
 	LaserScannerDriver(); //costruttore di default
-	void new_scan(std::vector<double> v);
+	void new_scan(std::vector<double> &v);
 	std::vector<double> get_scan();
 	void clear_buffer(); 
-	double get_distance(double grad);
+	double get_distance(double grad) const;
 	friend std::ostream& operator<<(std::ostream& os, const LaserScannerDriver obj); //overloading <<
 
 	LaserScannerDriver(const LaserScannerDriver& other); //costruttore di copia

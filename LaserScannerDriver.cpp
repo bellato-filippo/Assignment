@@ -28,7 +28,7 @@ LaserScannerDriver::LaserScannerDriver(double r) {
 
 /*Inserisce una nuova scansione nel buffer. Alloca nuova memoria solo se 
 il buffer si sta riempiendo. Una volta pieno sovrascrive solo i dati*/
-void LaserScannerDriver::new_scan(std::vector<double> v) {
+void LaserScannerDriver::new_scan(std::vector<double> &v) {
 	if (buffer[index] == nullptr) { //verifica se quell'elemento è ancora vuoto
 		buffer[index] = new double[scan_dimension];
 	}
@@ -54,26 +54,30 @@ void LaserScannerDriver::new_scan(std::vector<double> v) {
 		size++;
 }
 
-/*Ritorna un vector con la più vecchia scansione. */
+/*Ritorna un vector con la più vecchia scansione e la elimina. */
 std::vector<double> LaserScannerDriver::get_scan() {
 	if (isEmpty()) { //se il buffer è vuoto ritorna un vettore di dimensione 0
-		std::cout << "Buffer vuoto";
+		std::cout << "Buffer vuoto\n";
 		std::vector<double> no(0);
 		return no;
 	}
 
 	std::vector<double> vettore(scan_dimension);
-
+	 
 	if (size <= index) { //in base alla posizione di index e size calcola dove si trova la scansione più vecchia
 		for (int i = 0; i < scan_dimension; i++) {
 			vettore[i] = buffer[index - size][i];
 		}
+		delete[] buffer[index - size];
+		buffer[index - size] = { nullptr };
 	}
 	else
 	{
 		for (int i = 0; i < scan_dimension; i++) {
 			vettore[i] = buffer[index + BUFFER_DIM - size][i];
 		}
+		delete[] buffer[index + BUFFER_DIM - size];
+		buffer[index + BUFFER_DIM - size] = { nullptr };
 	}
 
 	size--; //dimensione diminuisce di 1
@@ -83,22 +87,24 @@ std::vector<double> LaserScannerDriver::get_scan() {
 /*Rimuove tutte le scansioni e ripristina tutti gli elementi a nullptr*/
 void LaserScannerDriver::clear_buffer() {
 	for (int i = 0; i < BUFFER_DIM; i++) {
-		delete[] buffer[i];
-		buffer[i] = { nullptr };
+		if (buffer[i] != nullptr) {
+			delete[] buffer[i];
+			buffer[i] = { nullptr };
+		}
 	}
 	index = 0;
 	size = 0;
 }
 
 /*Datogli un angolo restituisce la distanza corrispondente dell'ultima lettura*/
-double LaserScannerDriver::get_distance(double angolo) {
+double LaserScannerDriver::get_distance(double angolo) const{
 	if (angolo < 0 || angolo > 180) { //ritorna -1 se l'angolo non è valido
-		std::cout << "Angolo fuori dall'intervallo(0-180)";
+		std::cout << "Angolo fuori dall'intervallo(0-180)\n";
 		return -1;
 	}
 
 	if (isEmpty()) { //ritorna -1 se il buffer è vuoto
-		std::cout << "Buffer vuoto";
+		std::cout << "Buffer vuoto\n";
 		return -1;
 	}
 
@@ -113,7 +119,7 @@ double LaserScannerDriver::get_distance(double angolo) {
 /*Overloading dell'operatore <<*/
 std::ostream& operator<<(std::ostream& os, const LaserScannerDriver obj) {
 	if (obj.isEmpty()) {
-		os << "Buffer vuoto";
+		os << "Buffer vuoto\n";
 		return os;
 	}
 
@@ -125,7 +131,7 @@ std::ostream& operator<<(std::ostream& os, const LaserScannerDriver obj) {
 	else
 	{
 		for (int i = 0; i < obj.scan_dimension; i++) {
-			os << obj.buffer[obj.BUFFER_DIM - 1][i];
+			os << obj.buffer[obj.BUFFER_DIM - 1][i] << "\n";
 		}
 	}
 	return os;
